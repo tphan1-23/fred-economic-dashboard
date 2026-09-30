@@ -24,7 +24,7 @@ How do interest rates, inflation, and unemployment relate to mortgage rates and 
 
 ## Dashboard
 
-Built in Power BI Desktop (see [POWERBI_GUIDE.md](POWERBI_GUIDE.md)). The slicer here is set to 2007 to 2023.
+Built in Power BI Desktop. The slicer here is set to 2007 to 2023.
 
 ![Dashboard screenshot](dashboard_screenshot.png)
 
@@ -43,7 +43,6 @@ Built in Power BI Desktop (see [POWERBI_GUIDE.md](POWERBI_GUIDE.md)). The slicer
 ```
 data/            raw FRED CSVs + fred_clean.csv
 cleaning.ipynb  cleaning and merging notebook
-POWERBI_GUIDE.md dashboard build steps and DAX
 fred-economic-dashboard.pbix  Power BI dashboard
 dashboard_screenshot.png  dashboard screenshot
 ```
