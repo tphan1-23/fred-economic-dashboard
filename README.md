@@ -1,48 +1,67 @@
-# Mortgage & Economic Indicators Dashboard
+# Mortgage & Economy Dashboard
 
-How do interest rates, inflation, and unemployment relate to mortgage rates and mortgage delinquencies? This project combines six Federal Reserve (FRED) series into one monthly dataset and visualizes it in Power BI.
+This project looks at one question: **how do interest rates, inflation, and unemployment affect mortgages?**
 
-## Data (FRED, fred.stlouisfed.org)
-
-| Series | Description | Native frequency |
-|---|---|---|
-| MORTGAGE30US | 30-year fixed mortgage rate | Weekly |
-| FEDFUNDS | Federal funds rate | Monthly |
-| DGS10 | 10-year Treasury yield | Daily |
-| UNRATE | Unemployment rate | Monthly |
-| CPIAUCSL | Consumer price index | Monthly |
-| DRSFRMACBS | Delinquency rate, single-family mortgages | Quarterly |
-
-## Cleaning (`cleaning.ipynb`)
-
-- Loaded 6 raw series (range 1947 to Sept 2026), converted FRED's `.` placeholders to nulls (720 missing daily Treasury values, mostly holidays).
-- Converted daily and weekly series to **monthly averages**; carried each quarterly delinquency value across its 3 months.
-- Calculated **inflation as year-over-year % change in CPI** and the **mortgage spread** (30-yr mortgage rate minus 10-yr Treasury).
-- Dropped October 2025: BLS did not publish UNRATE/CPI for that month, so I left it out rather than fabricate a value.
-- Delinquency data is published with a lag, so the latest 4 months are blank.
-- **Result: `data/fred_clean.csv`, 427 rows x 9 columns, Jan 1991 to Aug 2026.**
-
-## Dashboard
-
-Built in Power BI Desktop. The slicer here is set to 2007 to 2023.
+I took six public data sets from the Federal Reserve (FRED), cleaned them up in Python, and built a dashboard in Power BI.
 
 ![Dashboard screenshot](dashboard_screenshot.png)
 
-## Insights
+*The date slicer is set to 2007–2023. You can drag it to look at any time period.*
 
-1. **Mortgage rates moved before the Fed did.** The Fed's first 2022 hike was in April (fed funds 0.08% to 0.20% in Q1), but the 30-year rate had already climbed from 3.10% in Dec 2021 to 5.0%+ by May 2022, when fed funds was only 0.77%. By Dec 2022 mortgage rates were 6.36% (+3.3 pts in 12 months) with fed funds at 4.10%. Mortgage rates track the 10-year Treasury and Fed expectations, not the policy rate itself.
-2. **Delinquencies follow unemployment, except when policy intervenes.** Across 1991 to 2026, unemployment and mortgage delinquency have a 0.70 correlation (strongest when unemployment leads by ~3 months, 0.71). In the 2008 crisis unemployment peaked at 10.0% (Oct 2009) and delinquencies peaked at 11.48% (Jan 2010). In 2020, unemployment spiked to 14.8% but delinquency only edged from 2.35% to 2.84%, because forbearance and stimulus broke the link. For a lender, unemployment alone is a poor risk signal without policy context.
-3. **The mortgage spread widened sharply after 2022.** From 1991 to 2019 the average spread over the 10-year Treasury was 1.66 pts. It hit 2.97 pts in June 2023, above the 2008 peak (2.87), and averaged 2.84 for 2023. It has since eased to 1.98 pts (Aug 2026), so a large part of borrowers' high rates in 2023 was risk/volatility pricing, not just Treasury yields.
+## The data
 
-## Current snapshot (Aug 2026)
+All data comes from [FRED](https://fred.stlouisfed.org).
 
-30-yr mortgage rate 6.67% (vs 6.59% a year earlier), unemployment 4.1%, inflation 3.35% YoY, fed funds 3.63%.
+| Name | What it measures | How often it updates |
+|---|---|---|
+| MORTGAGE30US | Average 30-year mortgage rate | Weekly |
+| FEDFUNDS | The Fed's main interest rate | Monthly |
+| DGS10 | 10-year U.S. Treasury yield | Daily |
+| UNRATE | Unemployment rate | Monthly |
+| CPIAUCSL | Consumer prices (used to get inflation) | Monthly |
+| DRSFRMACBS | Share of home loans that are behind on payments | Quarterly |
 
-## Repo layout
+## What I did to the data
 
-```
-data/            raw FRED CSVs + fred_clean.csv
-cleaning.ipynb  cleaning and merging notebook
-fred-economic-dashboard.pbix  Power BI dashboard
-dashboard_screenshot.png  dashboard screenshot
-```
+The files update at different speeds, so I put them all on one monthly timeline (`cleaning.ipynb`):
+
+1. Turned daily and weekly numbers into monthly averages.
+2. Repeated each quarterly number for all 3 months of that quarter.
+3. Calculated **inflation** (how much prices rose compared to a year ago).
+4. Calculated the **mortgage spread** (mortgage rate minus the 10-year Treasury yield).
+5. Removed October 2025, because the government never published unemployment or price data for that month. I did not want to guess.
+
+**Final result:** one table (`data/fred_clean.csv`) with 427 months, from January 1991 to August 2026.
+
+Note: the newest 4 months of the delinquency number are blank because it comes out late.
+
+## What I found
+
+**1. Mortgage rates went up before the Fed did.**
+The 30-year rate rose from 3.10% (Dec 2021) to over 5% by May 2022, when the Fed's rate was still only 0.77%. By Dec 2022 it was 6.36%, up 3.3 points in one year. Mortgage rates follow what people expect the Fed to do, not just what it has already done.
+
+**2. Late mortgage payments usually follow unemployment, but not always.**
+Over the whole period the two move together (correlation of 0.70). In the 2008 crisis, unemployment peaked at 10.0% and late payments peaked at 11.48% a few months later. In 2020, unemployment jumped to 14.8%, but late payments only went from 2.35% to 2.84%. Government help programs (like payment pauses and stimulus checks) likely kept people from falling behind.
+
+**3. The mortgage spread got much bigger after 2022.**
+From 1991 to 2019 the spread averaged 1.66 points. It reached 2.97 points in June 2023, higher than in 2008 (2.87). By August 2026 it was back down to 1.98. This means part of the high mortgage rates in 2023 came from lenders charging extra for risk, not only from higher Treasury yields.
+
+## Latest numbers (August 2026)
+
+- 30-year mortgage rate: **6.67%** (6.59% a year earlier)
+- Unemployment: **4.1%**
+- Inflation: **3.35%**
+- Fed funds rate: **3.63%**
+
+## Files in this project
+
+| File | What it is |
+|---|---|
+| `fred-economic-dashboard.pbix` | The Power BI dashboard (open with Power BI Desktop) |
+| `cleaning.ipynb` | Python notebook that cleans and combines the data |
+| `data/` | The six original FRED files and the final `fred_clean.csv` |
+| `dashboard_screenshot.png` | Picture of the dashboard |
+
+## Tools used
+
+Python (pandas), Power BI Desktop, FRED data.
