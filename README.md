@@ -6,7 +6,7 @@ I took six public data sets from the Federal Reserve (FRED), cleaned them up in 
 
 ![Dashboard screenshot](dashboard_screenshot.png)
 
-*The date slicer is set to 2007–2023. You can drag it to look at any time period.*
+*The date slicer is set to 2007–2023.*
 
 ## The data
 
@@ -64,4 +64,4 @@ From 1991 to 2019 the spread averaged 1.66 points. It reached 2.97 points in Jun
 
 ## Tools used
 
-Python (pandas), Power BI Desktop, FRED data.
+Python (pandas), Power BI Desktop, FRED data
